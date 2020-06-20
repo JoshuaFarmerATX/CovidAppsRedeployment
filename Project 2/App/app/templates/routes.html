@@ -1,0 +1,218 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="home">
+</section>
+<div class='bodyDiv' style="container-fluid">
+    <h2 class="myH2">Current Covid-19 Data API Routes</h2>
+    <p class="myP">
+        Many of our API routes utilize dates or ISO3 codes. The date format is YYYY-MM-DD. (Example: 2020-03-15) ISO3 codes are 3 character country codes used for each country. For a list of ISO3 (alpha3 code) codes click <a href="https://www.iban.com/country-codes">here.</a>
+        Anywhere "iso3" or "date" are mentioned in a URL, simply replace that with the appropriate date or ISO3 code.
+    </p>
+    <table class="table table-hover ml-5 mr-5 mt-5 mb-5">
+        <thead class="myP">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">URL</th>
+            <th scope="col">Description</th>
+          </tr>
+        </thead>
+        <tbody class="myP">
+          <tr>
+            <th scope="row">1</th>
+            <td>Most Recent</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/most_recent/</td>
+            <td>Most recent case number/death/recovered totals for every country worldwide</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Cases</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/</td>
+            <td>Most recent number of cases for every country worldwide</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Deaths</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/</td>
+            <td>Most recent total deaths for every country worldwide</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Most Recent Recovered</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered</td>
+            <td>Most recent and total recoveries for every country worldwide</td>
+          </tr>
+          <tr>
+            <th scope="row">5</th>
+            <td>Most Recent by Country</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/{iso3}</td>
+            <td>Most recent case number/death/recovered totals filtered by country (using the country's ISO code)</td>
+          </tr>
+          <tr>
+            <th scope="row">6</th>
+            <td>Most Recent Cases by Country</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/{iso3}</td>
+            <td>Most recent case totals filtered by country (using the country's ISO code)</td>
+          </tr>
+          <tr>
+            <th scope="row">7</th>
+            <td>Most Recent Deaths by Country</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/{iso3}</td>
+            <td>Most recent death totals filtered by country (using the country's ISO code)</td>
+          </tr>
+          <tr>
+            <th scope="row">8</th>
+            <td>Most Recent Recoveries by Country</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered/{iso3}</td>
+            <td>Most recent recovery totals filtered by country (using the country's ISO code)</td>
+          </tr>
+          <tr>
+            <th scope="row">9</th>
+            <td>Global Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/timeseries/</td>
+            <td>Global time series data. Returns totals of cases/deaths/recoveries as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">10</th>
+            <td>Global Cases Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/timeseries/</td>
+            <td>Global cases time series data. Returns totals of cases as of a each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">11</th>
+            <td>Global Deaths Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/timeseries/</td>
+            <td>Global deaths time series data. Returns totals of deaths as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">12</th>
+            <td>Global Recoveries Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered/timeseries/</td>
+            <td>Global recoveries time series data. Returns totals of recoveries as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">13</th>
+            <td>Country Totals Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/{iso3}/timeseries/</td>
+            <td>Time series data filtered by country (using the country's ISO code). Returns totals of cases/deaths/recoveries as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">14</th>
+            <td>Country Cases Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/{iso3}/timeseries/</td>
+            <td>Time series data for cases filtered by country (using the country's ISO code). Returns totals of cases as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">15</th>
+            <td>Country Deaths Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/{iso3}/timeseries/</td>
+            <td>Time series data for deaths filtered by country (using the country's ISO code). Returns totals of deaths as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">16</th>
+            <td>Country Deaths Timeseries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered/{iso3}/timeseries/</td>
+            <td>Time series data for cases filtered by country (using the country's ISO code). Returns totals of recoveries as of each date since start of data collection</td>
+          </tr>
+          <tr>
+            <th scope="row">17</th>
+            <td>Totals Worldwide by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/bydate/{YYYY-MM-DD}</td>
+            <td>Case/recovery/death totals for every country worldwide as of a particular date (formatted YYYY-MM-DD).</td>
+          </tr>
+          <tr>
+            <th scope="row">18</th>
+            <td>Total Cases Worldwide by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/bydate/{YYYY-MM-DD}</td>
+            <td>Case totals for every country worldwide as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">19</th>
+            <td>Total Deaths Worldwide by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/bydate/{YYYY-MM-DD}</td>
+            <td>Death totals for every country worldwide as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">20</th>
+            <td>Total Recoveries Worldwide by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered/bydate/{YYYY-MM-DD}</td>
+            <td>Recovery totals for every country worldwide as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">21</th>
+            <td>Totals by Country by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/{iso3}/bydate/{YYYY-MM-DD}</td>
+            <td>Case/recovery/death totals filtered by country (using ISO3 code) as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">22</th>
+            <td>Cases by Country by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/{iso3}/bydate/{YYYY-MM-DD}</td>
+            <td>Case totals filtered by country (using ISO3 code) as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">23</th>
+            <td>Deaths by Country by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/{iso3}/bydate/{YYYY-MM-DD}</td>
+            <td>Death totals filtered by country (using ISO3 code) as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">24</th>
+            <td>Recoveries by Country by Specific Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered/{iso3}/bydate/{YYYY-MM-DD}</td>
+            <td>Recovery totals filtered by country (using ISO3 code) as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">25</th>
+            <td>Global Most Recent</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/global/most_recent/</td>
+            <td>This route pulls the most recent results for total cases/deaths/recoveries on the planet</td>
+          </tr>
+          <tr>
+            <th scope="row">26</th>
+            <td>Most Recent Confirmed Cases</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/global/cases/</td>
+            <td>This route pulls the most recent results for total cases on the planet</td>
+          </tr>
+          <tr>
+            <th scope="row">27</th>
+            <td>Most Recent Confirmed Deaths</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/global/dead/</td>
+            <td>This route pulls the most recent results for total deaths on the planet</td>
+          </tr>
+          <tr>
+            <th scope="row">28</th>
+            <td>Most Recent Confirmed Recoveries</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/global/recovered/</td>
+            <td>This route pulls the most recent results for total recoveries on the planet</td>
+          </tr>
+          <tr>
+            <th scope="row">29</th>
+            <td>Global Sum by Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/global/bydate/{YYYY-MM-DD}</td>
+            <td>This route returns global totals for cases/deaths/recoveries as of a particular date (formatted YYYY-MM-DD).</td>
+          </tr>
+          <tr>
+            <th scope="row">30</th>
+            <td>Global Cases by Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/cases/global/bydate/{YYYY-MM-DD}</td>
+            <td>This route returns global totals for cases as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">31</th>
+            <td>Global Deaths by Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/dead/global/bydate/{YYYY-MM-DD}</td>
+            <td>This route returns global totals for deaths as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+          <tr>
+            <th scope="row">32</th>
+            <td>Global Recoveries by Date</td>
+            <td>https://covid-mgzrmsj5kq-uc.a.run.app/API/recovered/global/bydate/{YYYY-MM-DD}</td>
+            <td>This route returns global totals for recoveries as of a particular date (formatted YYYY-MM-DD)</td>
+          </tr>
+        </tbody>
+      </table>
+    
+</div>
+{% endblock %}
+
