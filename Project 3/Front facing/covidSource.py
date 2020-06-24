@@ -4,7 +4,7 @@ from pprint import pprint
 
 def apiData(call):
 
-    response = json.loads(requests.get(f'https://api-pc6dbtrtla-uc.a.run.app/API/{call}').text)
+    response = json.loads(requests.get(f'https://api-app-pjblaypjta-uc.a.run.app/API/{call}').text)
     cases = int(response[0].get('Cases'))
     recoveries = int(response[0].get('Recovered'))
     deaths = int(response[0].get('Deaths'))
@@ -16,7 +16,7 @@ def apiData(call):
     }
 
 def apiDataCallMulti(call, region):
-    responses = json.loads(requests.get(f'https://api-pc6dbtrtla-uc.a.run.app/API/{call}').text)
+    responses = json.loads(requests.get(f'https://api-app-pjblaypjta-uc.a.run.app/API/{call}').text)
     dict = []
     for i in range(len(responses) - 1):
         if region == 'State':
@@ -39,7 +39,7 @@ def apiDataCallMulti(call, region):
     return dict
 
 def apiDataCallTimeSeries(call, region):
-    responses = json.loads(requests.get(f'https://api-pc6dbtrtla-uc.a.run.app/API/{call}').text)
+    responses = json.loads(requests.get(f'https://api-app-pjblaypjta-uc.a.run.app/API/{call}').text)
     pprint(responses)
     dict = []
     for i in range(len(responses) - 1):

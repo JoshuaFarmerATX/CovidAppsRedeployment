@@ -9,7 +9,7 @@ from fbprophet.diagnostics import performance_metrics
 from fbprophet.plot import plot_cross_validation_metric
 
 # Import data 
-r = requests.get("https://api-pc6dbtrtla-uc.a.run.app/API/timeseries/usa")
+r = requests.get("https://api-app-pjblaypjta-uc.a.run.app/API/timeseries/usa")
 response_dict = r.json()
 df = pd.DataFrame.from_dict(response_dict)
 df = df.rename(columns={'Totals as of Date': 'Date'})

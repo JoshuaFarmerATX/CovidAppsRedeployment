@@ -14,7 +14,7 @@ from modeling_us import predict_cases, predict_deaths
 app = Flask(__name__)
 
 # Import data 
-r = requests.get("https://api-pc6dbtrtla-uc.a.run.app/API/timeseries/usa")
+r = requests.get("https://api-app-pjblaypjta-uc.a.run.app/API/timeseries/usa")
 response_dict = r.json()
 df = pd.DataFrame.from_dict(response_dict)
 df = df.rename(columns={'Totals as of Date': 'Date'})

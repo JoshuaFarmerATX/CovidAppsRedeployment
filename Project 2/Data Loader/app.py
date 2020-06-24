@@ -117,7 +117,7 @@ def load():
 
     # Connect to the "Covid" database
 
-    connection_string = "mysql+pymysql://root:ehaarmanny@/Covid?unix_socket=/cloudsql/project2-270717:us-central1:covid2019"
+    connection_string = "mysql+pymysql://root:ehaarmanny@/Covid?unix_socket=/cloudsql/project-2-280623:us-central1:covid-db"
     engine = create_engine(connection_string)
 
     # Create "daily_cases" table in "Covid" database with "covid_db" dataframe

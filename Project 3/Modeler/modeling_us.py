@@ -16,7 +16,7 @@ import plotly.offline as py
 def prepdata_cases(state):
     
     state_str = state.replace(' ', "%20")
-    df = pd.read_json(f"http://api-pc6dbtrtla-uc.a.run.app/API/us/timeseries/totals/{state_str}")
+    df = pd.read_json(f"https://api-app-pjblaypjta-uc.a.run.app/API/us/timeseries/totals/{state_str}")
     df = df.rename(columns={'Totals as of Date': 'Date'})
     df['Date'] = pd.to_datetime(df['Date']).dt.date
     df['NewCases'] = df['Cases'] - df['Cases'].shift(1)
