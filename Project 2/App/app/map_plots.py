@@ -7,7 +7,7 @@ import datetime as dt
 import os
 import json
 
-connection_string = "mysql+pymysql://root:ehaarmanny@/Covid?unix_socket=/cloudsql/project2-270717:us-central1:covid2019"
+connection_string = "mysql+pymysql://root:ehaarmanny@/Covid?unix_socket=/cloudsql/project-2-280623:us-central1:covid-db"
 
 #%%
 def load_data():

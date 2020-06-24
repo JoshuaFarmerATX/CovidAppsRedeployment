@@ -14,7 +14,7 @@ connection_string = sqlalchemy.engine.url.URL(
     password="ehaarmanny",
     database="Covid",
     query={
-        "unix_socket": "/cloudsql/{}".format("project2-270717:us-central1:covid2019")
+        "unix_socket": "/cloudsql/{}".format("project-2-280623:us-central1:covid-db")
     },
 )
 
