@@ -17,7 +17,7 @@ class DictMixIn:
 
 class GlobalDailyCases(Base, DictMixIn):
     __tablename__ = 'daily_cases'
-    index = Column(Integer, primary_key=True)
+    index = Column(Integer, primary_key=True, nullable=False)
     country_region = Column(String)
     province_state = Column(String)
     lat = Column(Float)
@@ -26,7 +26,7 @@ class GlobalDailyCases(Base, DictMixIn):
     confirmed = Column(Integer)
     deaths = Column(Integer)
     recovered = Column(Integer)
-    iso3 = Column(Integer)
+    iso3 = Column(String)
 
 class USADailyCases(Base, DictMixIn):
     __tablename__ = "usa_covid19"
