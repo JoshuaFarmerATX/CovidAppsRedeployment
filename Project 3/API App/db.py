@@ -49,4 +49,4 @@ if __name__ == "__main__":
 
     engine = create_engine(conn_string_proxy)
     global_daily_cases_db = Session(engine)
-    print([val.to_dict() for val in session.query(GlobalDailyCases).filter(DailyCases.iso3 == "BRA")])
+    print([val.to_dict() for val in global_daily_cases_db.query(GlobalDailyCases).filter(GlobalDailyCases.iso3 == "BRA")])
