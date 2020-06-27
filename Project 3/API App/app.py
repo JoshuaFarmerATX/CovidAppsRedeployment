@@ -208,7 +208,9 @@ async def recoveries_for_every_country_as_of_date_formatted_YYYYMMDD(asof_date):
 
 # API Route 21: Specific Country Totals as of a particular date
 @app.get("/API/bydate/countrytotals/{iso3_code}/{asof_date}", tags=["Global By Date"])
-async def specific_country_totals_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(iso3_code, asof_date):
+async def specific_country_totals_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(
+    iso3_code, asof_date
+):
     cursor.execute(
         f"SELECT iso3 AS ISO3, country_region AS Country, date AS 'Last Update', confirmed AS Cases, deaths AS Deaths, recovered AS Recovered FROM daily_cases WHERE iso3 = '{iso3_code}' AND date = '{asof_date}'"
     )
@@ -217,7 +219,9 @@ async def specific_country_totals_as_of_a_specific_date_using_iso3_code_for_coun
 
 # API Route 22: Specific Country Cases as of a particular date
 @app.get("/API/bydate/countrycases/{iso3_code}/{asof_date}", tags=["Global By Date"])
-async def specific_country_cases_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(iso3_code, asof_date):
+async def specific_country_cases_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(
+    iso3_code, asof_date
+):
     cursor.execute(
         f"SELECT iso3 AS ISO3, country_region AS Country, date AS 'Last Update', confirmed AS Cases FROM daily_cases WHERE iso3 = '{iso3_code}' AND date = '{asof_date}'"
     )
@@ -226,7 +230,9 @@ async def specific_country_cases_as_of_a_specific_date_using_iso3_code_for_count
 
 # API Route 23: Specific Country Deaths as of a particular date
 @app.get("/API/bydate/countrydeaths/{iso3_code}/{asof_date}", tags=["Global By Date"])
-async def specific_country_deaths_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(iso3_code, asof_date):
+async def specific_country_deaths_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(
+    iso3_code, asof_date
+):
     cursor.execute(
         f"SELECT iso3 AS ISO3, country_region AS Country, date AS 'Last Update', deaths AS Deaths FROM daily_cases WHERE iso3 = '{iso3_code}' AND date = '{asof_date}'"
     )
@@ -237,7 +243,9 @@ async def specific_country_deaths_as_of_a_specific_date_using_iso3_code_for_coun
 @app.get(
     "/API/bydate/countryrecoveries/{iso3_code}/{asof_date}", tags=["Global By Date"]
 )
-async def specific_country_recoveries_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(iso3_code, asof_date):
+async def specific_country_recoveries_as_of_a_specific_date_using_iso3_code_for_country_and_date_formatted_YYYYMMDD(
+    iso3_code, asof_date
+):
     cursor.execute(
         f"SELECT iso3 AS ISO3, country_region AS Country, date AS 'Last Update', recovered AS Recovered FROM daily_cases WHERE iso3 = '{iso3_code}' AND date = '{asof_date}'"
     )
@@ -423,6 +431,7 @@ async def most_recent_dead_by_a_specific_county_in_a_specific_state(state, count
     )
     return cursor.fetchall()
 
+
 # API Route 45: Timeseries by State
 @app.get("/API/us/timeseries/totals/{state}", tags=["USA/States Time Series"])
 async def timeseries_by_specific_state(state):
@@ -452,7 +461,9 @@ async def timeseries_of_deaths_by_specific_state(state):
 
 # API Route 48: Timeseries by State and All Counties
 @app.get("/API/us/timeseries/{state}/allcounties", tags=["USA/States Time Series"])
-async def timeseries_of_totals_for_all_counties_in_a_specific_state_ordered_by_county(state):
+async def timeseries_of_totals_for_all_counties_in_a_specific_state_ordered_by_county(
+    state,
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', confirmed AS Cases, deaths AS Deaths FROM usa_covid19 WHERE province_state = '{state}' ORDER BY county_city"
     )
@@ -463,7 +474,9 @@ async def timeseries_of_totals_for_all_counties_in_a_specific_state_ordered_by_c
 @app.get(
     "/API/us/timeseries/cases/{state}/allcounties", tags=["USA/States Time Series"]
 )
-async def timeseries_of_cases_for_all_counties_in_a_specific_state_ordered_by_county(state):
+async def timeseries_of_cases_for_all_counties_in_a_specific_state_ordered_by_county(
+    state,
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', confirmed AS Cases FROM usa_covid19 WHERE province_state = '{state}' ORDER BY county_city"
     )
@@ -474,7 +487,9 @@ async def timeseries_of_cases_for_all_counties_in_a_specific_state_ordered_by_co
 @app.get(
     "/API/us/timeseries/deaths/{state}/allcounties", tags=["USA/States Time Series"]
 )
-async def timeseries_of_deaths_for_all_counties_in_a_specific_state_ordered_by_county(state):
+async def timeseries_of_deaths_for_all_counties_in_a_specific_state_ordered_by_county(
+    state,
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', deaths AS Deaths FROM usa_covid19 WHERE province_state = '{state}' ORDER BY county_city"
     )
@@ -537,7 +552,9 @@ async def deaths_for_all_states_as_of_a_specific_date_formatted_YYYYMMDD(date):
 
 # API Route 57: Totals by State by Date
 @app.get("/API/us/totals/{date}/{state}", tags=["USA/States by Date"])
-async def totals_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(date, state):
+async def totals_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state
+):
     cursor.execute(
         f"SELECT province_state AS State, date AS 'Totals as of Date', SUM(confirmed) AS Cases, SUM(deaths) AS Deaths FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}' GROUP BY province_state"
     )
@@ -546,7 +563,9 @@ async def totals_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(
 
 # API Route 58: Cases by State by Date
 @app.get("/API/us/{date}/cases/{state}", tags=["USA/States by Date"])
-async def cases_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(date, state):
+async def cases_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state
+):
     cursor.execute(
         f"SELECT province_state AS State, date AS 'Totals as of Date', SUM(confirmed) AS Cases FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}' GROUP BY province_state"
     )
@@ -555,7 +574,9 @@ async def cases_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(d
 
 # API Route 59: Dead by State by Date
 @app.get("/API/us/{date}/dead/{state}", tags=["USA/States by Date"])
-async def deaths_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(date, state):
+async def deaths_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state
+):
     cursor.execute(
         f"SELECT province_state AS State, date AS 'Totals as of Date', SUM(deaths) AS Deaths FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}' GROUP BY province_state"
     )
@@ -564,7 +585,9 @@ async def deaths_by_specific_state_and_as_of_a_specific_date_formatted_YYYYMMDD(
 
 # API Route 60: Totals by State and All Counties by Date
 @app.get("/API/us/{date}/{state}/allcounties", tags=["USA/States by Date"])
-async def totals_for_all_counties_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(date, state):
+async def totals_for_all_counties_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', confirmed AS Cases, deaths AS Deaths FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}'"
     )
@@ -573,7 +596,9 @@ async def totals_for_all_counties_in_a_specific_state_as_of_a_specific_date_form
 
 # API Route 61: Cases by State and All Counties By Date
 @app.get("/API/us/cases/{date}/cases/{state}/allcounties", tags=["USA/States by Date"])
-async def cases_for_all_counties_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(date, state):
+async def cases_for_all_counties_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', confirmed AS Cases FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}'"
     )
@@ -582,7 +607,9 @@ async def cases_for_all_counties_in_a_specific_state_as_of_a_specific_date_forma
 
 # API Route 62: Dead by State and All Counties by Date
 @app.get("/API/us/{date}/dead/{state}/allcounties", tags=["USA/States by Date"])
-async def deaths_for_all_counties_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(date, state):
+async def deaths_for_all_counties_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', deaths AS Deaths FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}'"
     )
@@ -591,7 +618,9 @@ async def deaths_for_all_counties_in_a_specific_state_as_of_a_specific_date_form
 
 # API Route 63: Totals by Date, State and Specific Counties
 @app.get("/API/us/{date}/{state}/{county}", tags=["USA/States by Date"])
-async def totals_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(date, state, county):
+async def totals_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state, county
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', confirmed AS Cases, deaths AS Deaths FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}' and county_city = '{county}'"
     )
@@ -600,7 +629,9 @@ async def totals_for_a_specific_county_in_a_specific_state_as_of_a_specific_date
 
 # API Route 64: Cases by Date, State and Specific Counties
 @app.get("/API/us/cases/{date}/{state}/{county}", tags=["USA/States by Date"])
-async def cases_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(date, state, county):
+async def cases_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state, county
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', confirmed AS Cases FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}' and county_city = '{county}'"
     )
@@ -609,7 +640,9 @@ async def cases_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_
 
 # API Route 65: Dead by Date, State and Specific Counties
 @app.get("/API/us/dead/{date}/{state}/{county}", tags=["USA/States by Date"])
-async def deaths_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(date, state, county):
+async def deaths_for_a_specific_county_in_a_specific_state_as_of_a_specific_date_formatted_YYYYMMDD(
+    date, state, county
+):
     cursor.execute(
         f"SELECT province_state AS State, county_city as County, date AS 'Totals as of Date', deaths AS Deaths FROM usa_covid19 WHERE date = '{date}' and province_state = '{state}' and county_city = '{county}'"
     )

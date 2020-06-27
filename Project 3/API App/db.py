@@ -1,10 +1,11 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, Float 
+from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.types import Date
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
+
 
 class DictMixIn:
     def to_dict(self):
@@ -15,8 +16,9 @@ class DictMixIn:
             for column in self.__table__.columns
         }
 
+
 class GlobalDailyCases(Base, DictMixIn):
-    __tablename__ = 'daily_cases'
+    __tablename__ = "daily_cases"
     index = Column(Integer, primary_key=True, nullable=False)
     country_region = Column(String)
     province_state = Column(String)
@@ -27,6 +29,7 @@ class GlobalDailyCases(Base, DictMixIn):
     deaths = Column(Integer)
     recovered = Column(Integer)
     iso3 = Column(String)
+
 
 class USADailyCases(Base, DictMixIn):
     __tablename__ = "usa_covid19"
@@ -49,4 +52,11 @@ if __name__ == "__main__":
 
     engine = create_engine(conn_string_proxy)
     global_daily_cases_db = Session(engine)
-    print([val.to_dict() for val in global_daily_cases_db.query(GlobalDailyCases).filter(GlobalDailyCases.iso3 == "BRA")])
+    print(
+        [
+            val.to_dict()
+            for val in global_daily_cases_db.query(GlobalDailyCases).filter(
+                GlobalDailyCases.iso3 == "BRA"
+            )
+        ]
+    )

@@ -4,9 +4,9 @@ import csv
 import pandas as pd
 from contextlib import closing
 from country_converter import CountryConverter
-from flask import Flask
+from flask import Flask, make_response
 
-from sqlalchemy import Column, Integer, String, Float 
+from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.types import Date
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -16,8 +16,9 @@ from connection import conn_string_proxy, conn_string_deploy
 
 Base = declarative_base()
 
+
 class GlobalDailyCases(Base):
-    __tablename__ = 'daily_cases'
+    __tablename__ = "daily_cases"
     index = Column(Integer, primary_key=True, nullable=False)
     country_region = Column(String)
     province_state = Column(String)
@@ -29,38 +30,38 @@ class GlobalDailyCases(Base):
     recovered = Column(Integer)
     iso3 = Column(String)
 
+
 app = Flask(__name__)
+
 
 @app.route("/")
 def load():
 
     # Connect to the "Covid" database
 
-    #Change connection_string to conn_string_proxy when connecting locally
-    #via proxy and to conn_string_deploy when being uploaded for GCP.
+    # Change connection_string to conn_string_proxy when connecting locally
+    # via proxy and to conn_string_deploy when being uploaded for GCP.
 
     connection_string = conn_string_proxy
-    
+
     engine = create_engine(connection_string)
-    
+
     Base.metadata.create_all(engine)
-    
+
     session = Session(bind=engine)
 
     ### World Data
-    # Covid-19 Confirmed Cases
     confirmed_url = "https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
     deaths_url = "https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
     recovered_url = "https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
-    
+
     confirmed_r = requests.get(confirmed_url, stream=True)
     deaths_r = closing(requests.get(deaths_url, stream=True))
     recovered_r = closing(requests.get(recovered_url, stream=True))
 
-    with (
-        closing(requests.get(confirmed_url, stream=True)) as confirmed_r, 
+    with closing(requests.get(confirmed_url, stream=True)) as confirmed_r, 
         closing(requests.get(deaths_url, stream=True)) as deaths_r, 
-        closing(requests.get(recovered_url, stream=True)) as recovered_r):
+        closing(requests.get(recovered_url, stream=True)) as recovered_r:
 
         confirmed_csv = csv.reader(confirmed_r.iter_lines(), delimeter=",")
         deaths_csv = csv.reader(deaths_r.iter_lines(), delimeter=",")
@@ -68,7 +69,7 @@ def load():
 
         csv_headers = list(next(confirmed_csv))
         reporting_dates = headers[4:]
-        
+
         next(deaths_csv)
         next(recovered_csv)
 
@@ -78,35 +79,42 @@ def load():
             confirmed_entry = entry[0]
             deaths_entry = entry[1]
             recovered_entry = entry[2]
-            
+
             province_state = confirmed_entry[0]
             country_region = confirmed_entry[1]
             lat = confirmed_entry[2]
             long = confirmed_entry[3]
 
-            country_region = "United Kingdom" if country_region == "UK" else country_region
-            
+            country_region = (
+                "United Kingdom" if country_region == "UK" else country_region
+            )
+
             for i, report_date in enumerate(reporting_dates, start=4):
-                record = GlobalDailyCases(**{
-                    "country_region": cc.convert(names=[country_region], to="name_short", not_found="n/a"),
-                    "province_state": province_state
-                    "lat": lat, 
-                    "long": long, 
-                    "date": datetime.strptime(report_date, "%m/%d/%y").date(), 
-                    "confirmed": confirmed_entry[i], 
-                    "deaths": deaths_entry[i], 
-                    "recovered":recovered_entry[i], 
-                    "iso3": cc.convert(names=[country_region], to="iso3", not_found=None),
-                })
+                record = GlobalDailyCases(
+                    **{
+                        "country_region": cc.convert(
+                            names=[country_region], to="name_short", not_found="n/a"
+                        ),
+                        "province_state": province_state,
+                        "lat": lat,
+                        "long": long,
+                        "date": datetime.strptime(report_date, "%m/%d/%y").date(),
+                        "confirmed": confirmed_entry[i],
+                        "deaths": deaths_entry[i],
+                        "recovered": recovered_entry[i],
+                        "iso3": cc.convert(
+                            names=[country_region], to="iso3", not_found=None
+                        ),
+                    }
+                )
                 session.add(record)
 
     session.commit()
-                
+
     ###########################################################################
     ############################# Old Below ###################################
     ###########################################################################
-   
-    
+
     confirmed_html = requests.get(confirmed_url).text
     confirmed_df = pd.read_html(confirmed_html)[0]
     confirmed_df = confirmed_df.iloc[:, 1:]
@@ -210,23 +218,22 @@ def load():
 
     # Connect to the "Covid" database
 
-    #Change connection_string to conn_string_proxy when connecting locally
-    #via proxy and to conn_string_deploy when being uploaded for GCP.
+    # Change connection_string to conn_string_proxy when connecting locally
+    # via proxy and to conn_string_deploy when being uploaded for GCP.
 
     connection_string = conn_string_proxy
-    
+
     engine = create_engine(connection_string)
-    
+
     Base.metadata.create_all(engine)
-    
+
     session = Session(bin=engine)
 
     # Create "daily_cases" table in "Covid" database with "covid_db" dataframe
     covid_merge2.to_sql(con=engine, name="daily_cases", if_exists="replace")
     plot_df.to_sql(con=engine, name="plotting", if_exists="replace")
 
-    s = "Successful"
-    return s
+    return make_response("Successful", 200)
 
 
 if __name__ == "__main__":
