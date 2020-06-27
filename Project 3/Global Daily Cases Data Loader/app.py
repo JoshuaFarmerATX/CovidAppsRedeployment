@@ -84,9 +84,8 @@ def load():
             lat = confirmed_entry[2]
             long = confirmed_entry[3]
 
-            country_region = (
-                "United Kingdom" if country_region == "UK" else country_region
-            )
+            if country_region == "UK":
+                country_region = "United Kingdom"
 
             for i, report_date in enumerate(reporting_dates, start=4):
                 record = GlobalDailyCases(
