@@ -8,7 +8,7 @@ from flask import Flask, make_response
 
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.types import Date, BigInteger, Text
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 
@@ -48,6 +48,9 @@ def load():
     Base.metadata.create_all(engine)
 
     session = Session(bind=engine)
+    
+    # get most recent upload date to minimized sql transactions
+    most_recent_date = session.query(func.max(GlobalDailyCases.date))
 
     # GlobalDailyCases.__table__.drop(bind=engine)
 
@@ -67,10 +70,11 @@ def load():
         recovered_csv = csv.reader(recovered_r.iter_lines(decode_unicode=True), delimiter=",")
 
         csv_headers = list(next(confirmed_csv))
-        reporting_dates = csv_headers[4:]
-
         next(deaths_csv)
         next(recovered_csv)
+
+        reporting_dates = [datetime.datetime.strptime(report_date, "%m/%d/%y").date() for report_date in csv_headers[4:]]
+        most_recent_date_index = reporting_dates.index(most_recent_date) # add try except when checking for index/most recent
 
         cc = coco.CountryConverter()
 
@@ -87,7 +91,7 @@ def load():
             if country_region == "UK":
                 country_region = "United Kingdom"
 
-            for i, report_date in enumerate(reporting_dates, start=4):
+            for i, report_date in enumerate(reporting_dates[most_recent_date_index:], start=4+most_recent_date_index):
                 record = GlobalDailyCases(
                     **{
                         "country_region": cc.convert(
@@ -96,7 +100,7 @@ def load():
                         "province_state": province_state,
                         "lat": lat,
                         "long": long,
-                        "date": datetime.datetime.strptime(report_date, "%m/%d/%y").date(),
+                        "date": report_date,
                         "confirmed": confirmed_entry[i],
                         "deaths": deaths_entry[i],
                         "recovered": recovered_entry[i],
