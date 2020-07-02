@@ -1,77 +1,121 @@
-from flask import Flask
 import pandas as pd
-import requests
-from sqlalchemy import create_engine
+import time
 import datetime
-import country_converter as coco
-import sqlalchemy
+import requests
+import csv
+from contextlib import closing
+from flask import Flask, make_response, g
+
+from sqlalchemy import Column, Float
+from sqlalchemy.types import Date, BigInteger, Text
+from sqlalchemy import create_engine, func
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session
 from connection import conn_string_proxy, conn_string_deploy
+
+Base = declarative_base()
 
 app = Flask(__name__)
 
+class USADailyCases(Base):
+    __tablename__ = "usa_covid19"
+    index = Column(BigInteger, primary_key=True)
+    country_region = Column(Text)
+    province_state = Column(Text)
+    county_city = Column(Text)
+    lat = Column(Float)
+    long = Column(Float)
+    date = Column(Date)
+    confirmed = Column(BigInteger)
+    deaths = Column(BigInteger)
+
+@app.before_request
+def before_request():
+    g.request_start_time = time.time()
 
 @app.route("/")
 def load():
-    ### USA Covid19 Data
-    # USA confirmed cases
-    usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
-    usa_confirmed_df = pd.read_csv(usa_confirmed_url)
-    usa_confirmed_df.drop(
-        ["UID", "iso2", "iso3", "code3", "FIPS", "Combined_Key"], axis=1, inplace=True
-    )
-    usa_confirmed_df = usa_confirmed_df.melt(
-        id_vars=["Country_Region", "Province_State", "Admin2", "Lat", "Long_"]
-    )
-    usa_confirmed_df = usa_confirmed_df.rename(
-        columns={
-            "Country_Region": "country_region",
-            "Province_State": "province_state",
-            "Admin2": "county_city",
-            "Lat": "lat",
-            "Long_": "long",
-            "variable": "date",
-            "value": "confirmed",
-        }
-    )
-
-    # USA deaths
-    usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"
-    usa_deaths_df = pd.read_csv(usa_deaths_url)
-    usa_deaths_df.drop(
-        ["UID", "iso2", "iso3", "code3", "FIPS", "Combined_Key", "Population"],
-        axis=1,
-        inplace=True,
-    )
-    usa_deaths_df = usa_deaths_df.melt(
-        id_vars=["Country_Region", "Province_State", "Admin2", "Lat", "Long_"]
-    )
-    usa_deaths_df = usa_deaths_df.rename(
-        columns={
-            "Country_Region": "country_region",
-            "Province_State": "province_state",
-            "Admin2": "county_city",
-            "Lat": "lat",
-            "Long_": "long",
-            "variable": "date",
-            "value": "deaths",
-        }
-    )
-
-    # Merge USA dataframes
-    usa_df = pd.merge(usa_confirmed_df, usa_deaths_df, how="outer")
-    usa_df = usa_df.drop_duplicates()
-    usa_df["date"] = pd.to_datetime(usa_df["date"]).dt.date
-    usa_df["confirmed"] = usa_df["confirmed"].fillna(0)
-    usa_df["deaths"] = usa_df["deaths"].fillna(0)
 
     connection_string = conn_string_deploy
+
     engine = create_engine(connection_string)
 
-    # Create "global_covid19" and "usa_covid19" tables in the "covid19" database
-    usa_df.to_sql(con=engine, name="usa_covid19", if_exists="replace")
+    Base.metadata.create_all(engine)
 
-    s = "Successful"
-    return s
+    session = Session(bind=engine)
+
+    # get most recent upload date to minimized sql transactions
+    most_recent_date = session.query(func.max(USADailyCases.date)).all()[0][0]
+
+    ### USA Covid19 Data
+    
+    usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
+    usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"
+    
+    with closing(requests.get(usa_confirmed_url, stream=True)) as confirmed_r, closing(
+        requests.get(usa_deaths_url, stream=True)
+    ) as deaths_r:
+
+        confirmed_csv = csv.reader(
+            confirmed_r.iter_lines(decode_unicode=True), delimiter=","
+        )
+        deaths_csv = csv.reader(deaths_r.iter_lines(decode_unicode=True), delimiter=",")
+        
+        csv_headers = list(next(confirmed_csv))
+        next(deaths_csv)
+
+        reporting_dates = [
+            datetime.datetime.strptime(report_date, "%m/%d/%y").date()
+            for report_date in csv_headers[4:]
+        ]
+        most_recent_date_index = reporting_dates.index(
+            most_recent_date
+        )  # add try except when checking for index/most recent
+
+        for entry in zip(confirmed_csv, deaths_csv):
+            confirmed_entry = entry[0]
+            deaths_entry = entry[1]
+
+            county_city = confirmed_entry[5]
+            province_state = confirmed_entry[6]
+            country_region = confirmed_entry[7]
+            lat = confirmed_entry[8]
+            long = confirmed_entry[9]
+
+            for i, report_date in enumerate(
+                reporting_dates[most_recent_date_index:],
+                start=11 + most_recent_date_index
+            ):
+                record = USADailyCases(
+                    **{
+                        "country_region": country_region_short,
+                        "province_state": province_state,
+                        "county_city": county_city
+                        "lat": lat,
+                        "long": long,
+                        "date": report_date,
+                        "confirmed": confirmed_entry[i],
+                        "deaths": deaths_entry[i],                        
+                    }
+                )
+                session.add(record)
+
+    ###############################################################
+    ####### Need to ensure null values are filled with 0 ##########
+    ###############################################################
+
+#   usa_df["confirmed"] = usa_df["confirmed"].fillna(0)
+#   usa_df["deaths"] = usa_df["deaths"].fillna(0)
+
+
+
+    session.commit()
+    session.close()
+    engine.dispose()
+
+    return make_response(
+        f"Successful.\n Load Completion Time: {time.time()-g.request_start_time} s", 200
+    )
 
 
 if __name__ == "__main__":
