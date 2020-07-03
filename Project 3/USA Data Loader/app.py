@@ -17,6 +17,7 @@ Base = declarative_base()
 
 app = Flask(__name__)
 
+
 class USADailyCases(Base):
     __tablename__ = "usa_covid19"
     index = Column(BigInteger, primary_key=True)
@@ -29,14 +30,16 @@ class USADailyCases(Base):
     confirmed = Column(BigInteger)
     deaths = Column(BigInteger)
 
+
 @app.before_request
 def before_request():
     g.request_start_time = time.time()
 
+
 @app.route("/")
 def load():
 
-    connection_string = conn_string_proxy
+    connection_string = conn_string_deploy
 
     engine = create_engine(connection_string)
 
@@ -48,10 +51,10 @@ def load():
     most_recent_date = session.query(func.max(USADailyCases.date)).all()[0][0]
 
     ### USA Covid19 Data
-    
+
     usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
     usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"
-    
+
     with closing(requests.get(usa_confirmed_url, stream=True)) as confirmed_r, closing(
         requests.get(usa_deaths_url, stream=True)
     ) as deaths_r:
@@ -60,7 +63,7 @@ def load():
             confirmed_r.iter_lines(decode_unicode=True), delimiter=","
         )
         deaths_csv = csv.reader(deaths_r.iter_lines(decode_unicode=True), delimiter=",")
-        
+
         csv_headers = list(next(confirmed_csv))
         next(deaths_csv)
 
@@ -87,7 +90,7 @@ def load():
 
             for i, report_date in enumerate(
                 reporting_dates[most_recent_date_index:],
-                start=11 + most_recent_date_index
+                start=11 + most_recent_date_index,
             ):
                 record = USADailyCases(
                     **{
@@ -98,7 +101,7 @@ def load():
                         "long": long,
                         "date": report_date,
                         "confirmed": confirmed_entry[i],
-                        "deaths": deaths_entry[i],                        
+                        "deaths": deaths_entry[i],
                     }
                 )
                 session.add(record)
@@ -113,4 +116,4 @@ def load():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
