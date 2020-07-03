@@ -36,7 +36,7 @@ def before_request():
 @app.route("/")
 def load():
 
-    connection_string = conn_string_deploy
+    connection_string = conn_string_proxy
 
     engine = create_engine(connection_string)
 
@@ -66,7 +66,7 @@ def load():
 
         reporting_dates = [
             datetime.datetime.strptime(report_date, "%m/%d/%y").date()
-            for report_date in csv_headers[4:]
+            for report_date in csv_headers[11:]
         ]
         most_recent_date_index = reporting_dates.index(
             most_recent_date
@@ -82,15 +82,18 @@ def load():
             lat = confirmed_entry[8]
             long = confirmed_entry[9]
 
+            if len(county_city) == 0:
+                county_city = province_state
+
             for i, report_date in enumerate(
                 reporting_dates[most_recent_date_index:],
                 start=11 + most_recent_date_index
             ):
                 record = USADailyCases(
                     **{
-                        "country_region": country_region_short,
+                        "country_region": country_region,
                         "province_state": province_state,
-                        "county_city": county_city
+                        "county_city": county_city,
                         "lat": lat,
                         "long": long,
                         "date": report_date,
@@ -99,15 +102,6 @@ def load():
                     }
                 )
                 session.add(record)
-
-    ###############################################################
-    ####### Need to ensure null values are filled with 0 ##########
-    ###############################################################
-
-#   usa_df["confirmed"] = usa_df["confirmed"].fillna(0)
-#   usa_df["deaths"] = usa_df["deaths"].fillna(0)
-
-
 
     session.commit()
     session.close()
@@ -119,4 +113,4 @@ def load():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
