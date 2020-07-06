@@ -72,7 +72,7 @@ Project 3: https://front-facing-pjblaypjta-uc.a.run.app/
     3. On Google Cloud Console, go into Google Cloud Run, click the service serving the Project 2 app, and click "Deploy New Revision at the top"
     4. Point the new revision to the latest app container. You need do nothing else but deploy the revision.
 #### 8. Double check HTML files to ensure all links were updated.
-#### 9. If you get an error or need to deploy one of the apps, follow the instructions at 7.6 to deploy a new revision, using the appropriate container name at step 7.6.2.
+#### 9. If you get an error or need to deploy one of the apps, follow the instructions at 7.5 to deploy a new revision, using the appropriate container name at step 7.5.ii.
 
 ## Project 3
 ### Before you start: be sure you are on the Project 3 project (or whatever you called it. at console.cloud.google.com.
@@ -192,4 +192,4 @@ Project 3 will, because of its modularization, be far easier to redeploy.
     11. Click "create" at the bottom.
     12. After the app deploys, click the app link to ensure it works. The loader will run and it may take a minute or two to complete.
 #### 12. Double check HTML files to ensure all links were updated.
-#### 13. If you get an error or need to deploy one of the apps, follow the instructions at 7.6 to deploy a new revision, using the appropriate container name at step 7.6.2.
+#### 13. If you get an error or need to deploy one of the apps, follow the instructions at 6.3 to deploy a new revision, using the appropriate container name at step 6.3.ii.
