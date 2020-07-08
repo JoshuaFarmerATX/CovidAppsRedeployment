@@ -1,22 +1,28 @@
-import pymysql
 from collections import OrderedDict
 from pymysql.cursors import DictCursorMixin, Cursor
-from pprint import pprint
-from fastapi import FastAPI
-import uvicorn
-from connection import conn_string_deploy
 
-# Change mydb to conn_string_proxy when connecting locally
+
+
+from fastapi import FastAPI
+
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import Session
+
+from .db import GlobalDailyCases, USADailyCases
+from connection import conn_string_deploy, conn_string_proxy
+
+# Change conn_string to conn_string_proxy when connecting locally
 # via proxy and to conn_string_deploy when being uploaded for GCP.
 
-mydb = conn_string_deploy
+conn_string = conn_string_proxy
+engine = create_engine(conn_string)
+session = Session(bind=engine)
 
 
-class OrderedDictCursor(DictCursorMixin, Cursor):
-    dict_type = OrderedDict
+# class OrderedDictCursor(DictCursorMixin, Cursor):
+#     dict_type = OrderedDict
 
-
-cursor = mydb.cursor(OrderedDictCursor)
+# cursor = mydb.cursor(OrderedDictCursor)
 
 app = FastAPI()
 
@@ -25,14 +31,15 @@ app = FastAPI()
 def home():
     return "API Access OK"
 
-
 # API Route 1: Most Recent Totals for Every Country Worldwide
 @app.get("/API/most_recent", tags=["Global Most Recent"])
 async def most_recent_totals_for_all_countries():
-    cursor.execute(
-        "SELECT iso3 AS ISO3, country_region AS Country, date AS 'Last Update', confirmed AS Cases, deaths AS Deaths, recovered AS Recovered FROM daily_cases WHERE date = (SELECT MAX(date) FROM daily_cases)"
-    )
-    return cursor.fetchall()
+    return [item.to_dict() for item in session.query(GlobalDailyCases).filter(GlobalDailyCases.date==func.max(GlobalDailyCases.date)).all()]
+  
+    # cursor.execute(
+    #     "SELECT iso3 AS ISO3, country_region AS Country, date AS 'Last Update', confirmed AS Cases, deaths AS Deaths, recovered AS Recovered FROM daily_cases WHERE date = (SELECT MAX(date) FROM daily_cases)"
+    # )
+    # return cursor.fetchall()
 
 
 # API Route 2: Most Recent Confirmed Cases for Every Country Worldwide
