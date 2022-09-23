@@ -59,7 +59,7 @@ pluggy==0.13.1
 pprintpp==0.4.0
 prometheus-client==0.7.1
 prompt-toolkit==3.0.5
-protobuf==3.12.1
+protobuf==3.18.3
 py==1.8.1
 pycountry==19.8.18
 pycountry-convert==0.7.2
